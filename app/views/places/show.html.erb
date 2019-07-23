@@ -42,6 +42,19 @@
   </div>
 
   <div class="clear"></div>
+
+  <% @place.comments.each do |comment| %>
+    <div>
+      <blockquote>
+        <b><%= comment.rating %></b> - 
+        <br />
+        <%= comment.message %>
+        <br />
+        <small><%= comment.user.email %></small>
+      </blockquote>
+    </div>
+  <% end %>
+
   <%= simple_form_for @comment, url: place_comments_path(@place) do |f| %>
     <%= f.input :message %>
     <%= f.input :rating %> 
