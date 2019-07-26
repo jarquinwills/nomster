@@ -6,15 +6,12 @@
 
   <% if @place.latitude.present? && @place.longitude.present? %>
     <script>
-
       function initMap() {
         var myLatLng = {lat: <%= @place.latitude %>, lng: <%= @place.longitude %>};
-
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 12,
           center: myLatLng
         });
-
         var marker = new google.maps.Marker({
           position: myLatLng,
           map: map,
@@ -22,18 +19,13 @@
         });
       }
     </script>
-
     <script async defer
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgAZ1wN6vHmzy3iSXojAwnbsuWOWFjwXE&callback=initMap">
     </script>
-
     <div id="map"></div>
-
   <% end %>
 
   <br />
-  
-    
   <div class="float_right">
     <% if current_user && current_user == @place.user %>
       <%= link_to 'Edit', edit_place_path(@place), class: 'btn btn-primary' %>
@@ -41,24 +33,67 @@
     <% end %>
   </div>
 
-  <div class="clear"></div>
   <br />
-  
-  <div class="col-10 offset-1">
-    <h1 class="float_right">Comments</h1>
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-      Add a comment
-    </button>
+  <div class="row">
+    <% @place.photos.each do |photo|  %>
+      <div class="picture-frame col-5">
+        <%= image_tag photo.picture.url, class: 'img-fluid' %>
+        <br />
+        <small class="picture_caption">-<%= photo.caption %></small>
+      </div>
+    <% end %>
   </div>
 
-  <%= simple_form_for @photo, url: place_photos_path(@place) do |f| %>
-    <%= f.input :caption %>
-    <%= f.input :picture %>
-    <%= f.submit "Add photo", class: "btn btn-primary" %>
+  <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#exampleModal">
+    Add Photo
+  </button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <%= simple_form_for @photo, url: place_photos_path(@place) do |f| %>
+        <div class="modal-body">
+            <%= f.input :caption %>
+            <%= f.input :picture %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <%= f.submit "Add photo", class: "btn btn-primary" %>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <br />
+  
+  <br />
+  <h1 class="float_right">Comments</h1>
+
+  <div class="row">
+    <% @place.comments.each do |comment| %>
+      <div class="col-12 col-sm-6">
+        <blockquote>
+          <% if comment.humanized_rating.present? %>
+            <b><%= comment.humanized_rating %></b> - 
+          <% end %>
+          <%= comment.message %>
+          <br />
+          <small><%= comment.user.email %></small>
+        </blockquote>
+      </div>
     <% end %>
+  </div>
 
-  <div class="clear"></div>
-
+  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+      Add a comment
+  </button>
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -82,24 +117,6 @@
     </div>
   </div>
 
-  <br />
-  <div class="row">
-    <% @place.comments.each do |comment| %>
-      <div class="col-12 col-sm-6">
-        <blockquote>
-          <% if comment.humanized_rating.present? %>
-            <b><%= comment.humanized_rating %></b> - 
-          <% end %>
-          <%= comment.message %>
-          <br />
-          <small><%= comment.user.email %></small>
-        </blockquote>
-      </div>
-    <% end %>
-  </div>
+  
 
-  <% @place.photos.each do |photo|  %>
-    <%= photo.caption %>
-    <%= image_tag photo.picture.url, class: 'img-fluid' %>
-    <% end %>
 </div>
