@@ -17,8 +17,10 @@
       <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
         <%= link_to 'Nomster', root_path, class: 'navbar-brand' %>
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <% if current_user.present? %>
           <li class="nav-item active">
             <%= link_to 'My Profile', user_path(current_user), class: 'nav-link' %>          </li>
+          <% end %>
           <li class="nav-item">
             <%= link_to new_place_path, class: "nav-link" do %>
               <i class="fa fa-plus-circle"></i> 
